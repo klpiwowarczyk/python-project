@@ -100,6 +100,7 @@ class GameManagement(object):
         text_surface = font.render(text,1,color)
         screen.blit(text_surface,(pos_x,pos_y))
 
+
 class Board(object):
     """Klasa w której tworzony jest obiekt plansza,
     jest on odświeżany na bazie 2 tablic, które zawierają obraz rozgrywki"""
