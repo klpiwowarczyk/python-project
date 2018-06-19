@@ -1,7 +1,6 @@
 import sys, os
 import pygame
 from Ships import Ships
-
 # colors
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -12,9 +11,9 @@ class GameManagement(object):
     def __init__(self):
         global screen
         pygame.init()
-        SCREEN_W = 1200
-        SCREEN_H = 600
-        screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
+        self.SCREEN_W = 1200
+        self.SCREEN_H = 600
+        screen = pygame.display.set_mode((self.SCREEN_W, self.SCREEN_H))
         self.board = Board()
         self.ships = Ships()
         self.ships.make_group_sprites()
@@ -23,17 +22,17 @@ class GameManagement(object):
         """ Funkcja zarządzająca oknem początkowym """
         intro = True
         screen.fill((255, 255, 255))
-        self.draw_text("Arial.ttf", 54, black, 440, 50, "Bitwa Morska")
+        self.draw_text(font="Arial.ttf", font_size=54, color=black, pos_x=440, pos_y=50, text="Bitwa Morska")
         self.draw_button((100, 100, 100), 490, 250, 150, 50)
-        self.draw_text("Arial.ttf", 32, black, 540, 264, "Graj!")
+        self.draw_text(font="Arial.ttf", font_size=32, color=black, pos_x=540, pos_y=264, text="Graj!")
         self.draw_button((100, 100, 100), 490, 350, 150, 50)
-        self.draw_text("Arial.ttf", 32, black, 520, 364, "Wyjście!")
+        self.draw_text(font="Arial.ttf", font_size=32, color=black, pos_x=520, pos_y=364, text="Wyjście!")
         while intro:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-            if pygame.mouse.get_pressed() == (1, 0, 0):
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos_x, pos_y = pygame.mouse.get_pos()
                 if self.button_clicked(pos_x, pos_y, 490, 250):
                     if self.button_clicked(pos_x, pos_y, 490, 250):
@@ -47,37 +46,61 @@ class GameManagement(object):
 
     def game_choice(self):
         game_choice = True
-        screen.fill((255, 255, 255))
-        self.draw_text("Arial.ttf", 54, black, 440, 50, "Bitwa Morska")
-        self.draw_button((100, 100, 100), 300, 250, 150, 50)
-        self.draw_text("Arial.ttf", 32, black, 330, 264, "Hot-Seat!")
-        self.draw_button((100, 100, 100), 700, 250, 150, 50)
-        self.draw_text("Arial.ttf", 32, black, 717, 262, "Multiplayer!")
         while game_choice:
+            self.fill_game_choice()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if pygame.mouse.get_pressed() == (1, 0, 0):
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     pos_x, pos_y = pygame.mouse.get_pos()
                     if self.button_clicked(pos_x, pos_y, 300, 250):
                         self.game_section()
                     if self.button_clicked(pos_x, pos_y, 700, 250):
-                        self.game_section()
+                        self.multiplayer_section()
                 pygame.display.update()
 
-    def button_clicked(self, pos_x, pos_y, butt_pos_x, butt_pos_y):
-        """
-        Sprawdza czy klawisz graj bądź wyjście został wciśnięty
-        :param pos_x: pozycja x kursora
-        :param pos_y: pozycja y kursora
-        :param butt_pos_x:
-        :param butt_pos_y:
-        :return: zwraca czy dany przycisk został wciśnięty
-        """
-        if butt_pos_x <= pos_x <= butt_pos_x+150 and butt_pos_y <= pos_y <= butt_pos_y+150:
-            return True
-        return False
+    def fill_game_choice(self):
+        screen.fill(white)
+        self.draw_text(font="Arial.ttf", font_size=54, color=black, pos_x=440, pos_y=50, text="Bitwa Morska")
+        self.draw_button((100, 100, 100), 300, 250, 150, 50)
+        self.draw_text(font="Arial.ttf", font_size=32, color=black, pos_x=330, pos_y=264, text="Hot-Seat!")
+        self.draw_button((100, 100, 100), 700, 250, 150, 50)
+        self.draw_text(font="Arial.ttf", font_size=32, color=black, pos_x=717, pos_y=262, text="Multiplayer!")
+
+    def multiplayer_section(self):
+        import Client
+        screen.fill(white)
+        self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Oczekiwanie na połączenie z serwerem...")
+        pygame.display.update()
+        client = Client.Client('localhost', 2223)
+        connected = client.connect_server()
+        if connected:
+            screen.fill(white)
+            self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Połączono z serwerem! Czekam na połączenie gracza..")
+            pygame.display.update()
+            msg = client.rcv_message()
+            if msg == 'start1':
+                screen.fill(white)
+                self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Znaleziono gracza! Następuje przekierowanie do gry...")
+                self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2,"Jesteś pierwszym graczem więc będziesz zaczynał")
+                pygame.display.update()
+                pygame.time.delay(1000)
+                self.game_section()
+            elif msg == 'start2':
+                screen.fill(white)
+                self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Znaleziono gracza! Następuje przekierowanie do gry...")
+                self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2,"Jesteś drugim graczem, przeciwnik zaczyna.")
+                pygame.display.update()
+                pygame.time.delay(1000)
+                self.game_section()
+
+        else:
+            screen.fill(white)
+            self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Nie udało się połączyć z serwerem !")
+            pygame.display.update()
+            pygame.time.delay(1000)
+
 
     def game_section(self):
         """Funkcja zarządzająca oknem gry"""
@@ -97,6 +120,19 @@ class GameManagement(object):
                     sys.exit()
             pygame.display.flip()
             screen.fill(white)
+
+    def button_clicked(self, pos_x, pos_y, butt_pos_x, butt_pos_y):
+        """
+        Sprawdza czy klawisz graj bądź wyjście został wciśnięty
+        :param pos_x: pozycja x kursora
+        :param pos_y: pozycja y kursora
+        :param butt_pos_x:
+        :param butt_pos_y:
+        :return: zwraca czy dany przycisk został wciśnięty
+        """
+        if butt_pos_x <= pos_x <= butt_pos_x+150 and butt_pos_y <= pos_y <= butt_pos_y+150:
+            return True
+        return False
 
     def display_sprites(self):
         distance = 100
@@ -125,7 +161,7 @@ class GameManagement(object):
         """
         pygame.draw.rect(screen, color, (pos_x, pos_y, width, height))
 
-    def draw_text(self, font, font_size, color, pos_x, pos_y, text):
+    def draw_text(self, pos_x, pos_y, text, font='Arial', font_size=24, color=black):
         """
         Funkcja tworząca tekst
         :param font: nazwa czcionki przykład ("Arial.ttf")
