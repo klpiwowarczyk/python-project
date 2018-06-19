@@ -12,16 +12,7 @@ class Client(object):
     def connect_server(self):
         try:
             self.sock.connect((self.host,self.port))
-            print("Udało się połączyć z serwerem !")
-            msg = self.rcv_message()
-            if msg == '1':
-                print('Zaczynasz ! Wyślij wiadomość')
-                wiad = input('>> ')
-                self.send_message(wiad)
-            if msg == '2':
-                print('Jesteś drugi! Zaczekaj na wiadomość..')
-                wiad = self.rcv_message()
-                print('Otrzymałeś wiadomość! "'+wiad+'"')
+            return True
 
         except:
             print("Nie udało się połączyć z serwerem.")
@@ -47,10 +38,15 @@ class Client(object):
 
     def start_game(self):
         try:
-            print('The game started !\nGood Luck!')
-            while True:
-                msg = input('>> ')
-                self.send_message(msg)
+            msg = self.rcv_message()
+            if msg == '1':
+                print('Zaczynasz ! Wyślij wiadomość')
+                wiad = input('>> ')
+                self.send_message(wiad)
+            if msg == '2':
+                print('Jesteś drugi! Zaczekaj na wiadomość..')
+                wiad = self.rcv_message()
+                print('Otrzymałeś wiadomość! "'+wiad+'"')
         except:
             print("Rozłączono z serwerem!")
 
