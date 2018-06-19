@@ -184,7 +184,15 @@ class Board(object):
             pos_y += distance
         self.blit_caption_board(40, 108, 70, 80)
 
-    #def draw_ship_type(self): x = 60, y = 440
+    # def draw_ship_type(self):
+    #     x = 60, y = 440
+    #     gameDisplay.fill(white)
+    #     largeText = pygame.font.Font('freesansbold.ttf', 115)
+    #     TextSurf, TextRect = text_objects("A bit Racey", largeText)
+    #     TextRect.center = ((display_width / 2), (display_height / 2))
+    #     gameDisplay.blit(TextSurf, TextRect)
+    #
+    #     pygame.draw.rect(gameDisplay, green, (150, 450, 100, 50))
 
 
     def draw_board_opponent(self):
