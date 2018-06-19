@@ -112,6 +112,7 @@ class GameManagement(object):
 
         self.board.draw_board_player()
         self.board.draw_board_opponent()
+        self.draw_ship_type_buttons()
 
         user_index_x = 0
         user_index_y = 0
@@ -199,6 +200,14 @@ class GameManagement(object):
         text_surface = font.render(text, 1, color)
         screen.blit(text_surface, (pos_x, pos_y))
 
+    def draw_ship_type_buttons(self):
+        #x = 60, y = 440
+        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=60, pos_y=430, text="Wybierz rodzaj statku do umieszczenia na tablicy")
+        self.draw_button((100, 100, 100), 60, 450, 30, 25)
+        self.draw_button((100, 100, 100), 60, 490, 60, 25)
+        self.draw_button((100, 100, 100), 60, 530, 90, 25)
+        self.draw_button((100, 100, 100), 60, 570, 120, 25)
+
 class Board(object):
     """Klasa w której tworzony jest obiekt plansza,
     jest on odświeżany na bazie 2 tablic, które zawierają obraz rozgrywki"""
@@ -254,17 +263,6 @@ class Board(object):
             pos_x = 60
             pos_y += distance
         self.blit_caption_board(40, 108, 70, 80)
-
-    # def draw_ship_type(self):
-    #     x = 60, y = 440
-    #     gameDisplay.fill(white)
-    #     largeText = pygame.font.Font('freesansbold.ttf', 115)
-    #     TextSurf, TextRect = text_objects("A bit Racey", largeText)
-    #     TextRect.center = ((display_width / 2), (display_height / 2))
-    #     gameDisplay.blit(TextSurf, TextRect)
-    #
-    #     pygame.draw.rect(gameDisplay, green, (150, 450, 100, 50))
-
 
     def draw_board_opponent(self):
         """Wyświetla planszę przeciwnika, znajduje się po prawej stronie"""
