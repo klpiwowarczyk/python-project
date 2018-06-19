@@ -3,6 +3,7 @@ import threading
 import pprint
 from threading import Lock
 
+
 lock = Lock()
 class MyThread(threading.Thread):
     def __init__(self):
@@ -44,7 +45,7 @@ class Server(object):
             else:
                 pair_of_players[1].append(conn)
             lock.release()
-
+        print(pair_of_players)
         print('----------------------------------------------------')
         print('Okay ! We got a pair of players matched.\n Let`s go!')
         print('----------------------------------------------------')
@@ -52,14 +53,14 @@ class Server(object):
 
     def start_game(self, conn1, conn2):
         try:
-            self.send_message(conn1,'1')
-            self.send_message(conn2,'2')
+            self.send_message(conn1,'start1')
+            self.send_message(conn2,'start2')
             while True:
                 msg = self.recv_msg(conn1)
                 self.send_message(conn2, msg)
                 msg = self.recv_msg(conn2)
                 self.send_message(conn1, msg)
-        except:
+        except Exception :
             print("Unexpected error")
 
     def send_message(self, conn, msg):
@@ -80,7 +81,7 @@ class Server(object):
 
 if __name__ == "__main__":
     try:
-        server = Server('localhost',2223)
+        server = Server('127.0.0.1',2223)
         threads = []
         thread = threading.Thread(target=server.match_players, args=()).start()
 
