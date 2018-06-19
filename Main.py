@@ -5,57 +5,58 @@ from User import User
 
 pygame.init()
 
-#colors
-white = (255,255,255)
-black = (0,0,0)
+# colors
+white = (255, 255, 255)
+black = (0, 0, 0)
 
 
 class GameManagement(object):
     """ Klasa do zarządzania grą, oknem intro oraz oknem gry"""
+
     def __init__(self):
         global screen
         SCREEN_W = 1200
         SCREEN_H = 600
-        screen = pygame.display.set_mode((SCREEN_W,SCREEN_H))
+        screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
+        self.isPlaying = True  # po skończonej grze gamePlay ustawiane będzie na False
 
     def game_intro(self):
         """ Funkcja zarządzająca oknem początkowym """
         intro = True
-        screen.fill((255,255,255))
-        self.draw_text("Arial.ttf",54,black,440,50,"Bitwa Morska")
-        self.draw_button((100,100,100),490,250,150,50)
-        self.draw_text("Arial.ttf",32,black,540,264,"Graj!")
-        self.draw_button((100,100,100),490,350,150,50)
-        self.draw_text("Arial.ttf",32,black,520,364,"Wyjście!")
+        screen.fill((255, 255, 255))
+        self.draw_text("Arial.ttf", 54, black, 440, 50, "Bitwa Morska")
+        self.draw_button((100, 100, 100), 490, 250, 150, 50)
+        self.draw_text("Arial.ttf", 32, black, 540, 264, "Graj!")
+        self.draw_button((100, 100, 100), 490, 350, 150, 50)
+        self.draw_text("Arial.ttf", 32, black, 520, 364, "Wyjście!")
         while intro:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                   pygame.quit()
-                   sys.exit()
-            if pygame.mouse.get_pressed() == (1,0,0):
-                pos_x,pos_y = pygame.mouse.get_pos()
-                pressed = self.button_clicked(pos_x,pos_y)
+                    pygame.quit()
+                    sys.exit()
+            if pygame.mouse.get_pressed() == (1, 0, 0):
+                pos_x, pos_y = pygame.mouse.get_pos()
+                pressed = self.button_clicked(pos_x, pos_y)
                 print(pressed)
                 if pressed == "play":
                     intro = False
                 if pressed == "exit":
-                   pygame.quit()
-                   sys.exit()
+                    pygame.quit()
+                    sys.exit()
             pygame.display.flip()
         self.game_section()
 
-    def button_clicked(self,pos_x,pos_y):
+    def button_clicked(self, pos_x, pos_y):
         """
         Sprawdza czy klawisz graj bądź wyjście został wciśnięty
         :param pos_x: pozycja x kursora
         :param pos_y: pozycja y kursora
         :return:
         """
-        if(pos_x >= 490 and pos_x < 640 and pos_y >= 250 and pos_y <= 300):
+        if (pos_x >= 490 and pos_x < 640 and pos_y >= 250 and pos_y <= 300):
             return "play"
-        if(pos_x >= 490 and pos_x < 640 and pos_y >= 350 and pos_y <= 400):
+        if (pos_x >= 490 and pos_x < 640 and pos_y >= 350 and pos_y <= 400):
             return "exit"
-
 
     def game_section(self):
         """ Funkcja zarządzająca oknem gry """
@@ -67,14 +68,35 @@ class GameManagement(object):
         board.draw_board_player()
         board.draw_board_opponent()
         board.update()
-        while True:
+
+        user_index_x = 0
+        user_index_y = 0
+
+        user = User()
+        user.create_user_array()
+
+        while self.isPlaying:
             for event in pygame.event.get():
+                if pygame.mouse.get_pressed() == (1, 0, 0):
+                    pos_x, pos_y = pygame.mouse.get_pos()
+
+                    for i in range(0, 9):
+                        if 60 + 30 * i < pos_x < 90 + 30 * i:
+                            user_index_y = i
+                    for j in range(0, 9):
+                        if 100 + 30 * j < pos_y < 130 + 30 * j:
+                            user_index_x = j
+
+                    user.set_boat_piece(user_index_x, user_index_y)
+                    user.print_array_console()
+
                 if event.type == pygame.QUIT:
+                    self.isPlaying = False
                     pygame.quit()
                     sys.exit()
             pygame.display.flip()
 
-    def draw_button(self,color,pos_x,pos_y,width,height):
+    def draw_button(self, color, pos_x, pos_y, width, height):
         """
         Funkcja tworząca przycisk (bez jego obsługi sam wygląd)
         :param color: kolor przycisku
@@ -84,9 +106,9 @@ class GameManagement(object):
         :param height: wysokość przycisku
         :return:
         """
-        pygame.draw.rect(screen,color,(pos_x,pos_y,width,height))
+        pygame.draw.rect(screen, color, (pos_x, pos_y, width, height))
 
-    def draw_text(self,font,font_size,color,pos_x,pos_y,text):
+    def draw_text(self, font, font_size, color, pos_x, pos_y, text):
         """
         Funkcja tworząca tekst
         :param font: nazwa czcionki przykład ("Arial.ttf")
@@ -97,9 +119,9 @@ class GameManagement(object):
         :param text: tekst, który ma zostać napisany
         :return:
         """
-        font = pygame.font.SysFont(font,font_size)
-        text_surface = font.render(text,1,color)
-        screen.blit(text_surface,(pos_x,pos_y))
+        font = pygame.font.SysFont(font, font_size)
+        text_surface = font.render(text, 1, color)
+        screen.blit(text_surface, (pos_x, pos_y))
 
 
 class Board(object):
@@ -132,17 +154,16 @@ class Board(object):
         :param txt_pos_y: pozycja y z której ma zacząć wyświetlać współrzędne liter
 
         """
-        numbers = [1,2,3,4,5,6,7,8,9,10]
-        words = ['A','B','C','D','E','F','G','H','I','J']
-        font = pygame.font.SysFont('Arial.ttf',24)
+        numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        words = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+        font = pygame.font.SysFont('Arial.ttf', 24)
         for i in range(len(numbers)):
-            numbers_surface = font.render(str(numbers[i]),1,black)
-            text_surface = font.render(str(words[i]),1,black)
-            screen.blit(numbers_surface,(nr_pos_x, nr_pos_y))
-            screen.blit(text_surface,(txt_pos_x, txt_pos_y))
+            numbers_surface = font.render(str(numbers[i]), 1, black)
+            text_surface = font.render(str(words[i]), 1, black)
+            screen.blit(numbers_surface, (nr_pos_x, nr_pos_y))
+            screen.blit(text_surface, (txt_pos_x, txt_pos_y))
             nr_pos_y += 30
             txt_pos_x += 30
-
 
     def draw_board_player(self):
         """Wyświetla planszę gracza, znajduje się po lewej stronie"""
@@ -151,14 +172,13 @@ class Board(object):
         distance = 30
         for i in range(len(self.board)):
             for j in range(len(self.board[i])):
-
                 pygame.draw.aalines(screen, black, False,
                                     [(pos_x, pos_y), (pos_x + distance, pos_y), (pos_x + distance, pos_y + distance),
                                      (pos_x, pos_y + distance), (pos_x, pos_y)])
                 pos_x += distance
             pos_x = 60
             pos_y += distance
-        self.blit_caption_board(40,108,70,80)
+        self.blit_caption_board(40, 108, 70, 80)
 
     def draw_board_opponent(self):
         """Wyświetla planszę przeciwnika, znajduje się po prawej stronie"""
@@ -167,24 +187,18 @@ class Board(object):
         distance = 30
         for i in range(len(self.board)):
             for j in range(len(self.board[i])):
-
                 pygame.draw.aalines(screen, black, False,
                                     [(pos_x, pos_y), (pos_x + distance, pos_y), (pos_x + distance, pos_y + distance),
                                      (pos_x, pos_y + distance), (pos_x, pos_y)])
                 pos_x += distance
             pos_x = 620
             pos_y += distance
-        self.blit_caption_board(600,108,630,80)
+        self.blit_caption_board(600, 108, 630, 80)
 
     def update(self):
         pygame.display.update()
 
+
 if __name__ == "__main__":
     game = GameManagement()
     game.game_intro()
-    user = User
-    user.create_user_array()
-    user.print_array_console()
-
-
-

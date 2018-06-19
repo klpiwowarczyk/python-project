@@ -3,7 +3,7 @@ import sys
 
 pygame.init()
 
-class User(object):
+class User():
     def __init__(self):
         self.size_x = 10
         self.size_y = 10
