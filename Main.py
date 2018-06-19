@@ -1,6 +1,7 @@
 import sys, os
 import pygame
 from Ships import Ships
+from User import User
 # colors
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -17,6 +18,7 @@ class GameManagement(object):
         self.board = Board()
         self.ships = Ships()
         self.ships.make_group_sprites()
+        self.isPlaying = True  # po skończonej grze gamePlay ustawiane będzie na False
 
     def game_intro(self):
         """ Funkcja zarządzająca oknem początkowym """
@@ -105,21 +107,38 @@ class GameManagement(object):
     def game_section(self):
         """Funkcja zarządzająca oknem gry"""
 
-        while True:
-            x, y = pygame.mouse.get_pos()
-            print(pygame.mouse.get_pressed())
-            self.board.draw_board_player()
-            self.board.draw_board_opponent()
-            self.display_sprites()
+        pygame.display.update()
+        screen.fill(white)
+
+        self.board.draw_board_player()
+        self.board.draw_board_opponent()
+
+        user_index_x = 0
+        user_index_y = 0
+
+        user = User()
+        user.create_user_array()
+
+        while self.isPlaying:
             for event in pygame.event.get():
-                # if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                #     if self.button_clicked(x,y,200,200):
-                #         self.ships.rotate_sprite(screen,90,4)
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    pos_x, pos_y = pygame.mouse.get_pos()
+
+                    for i in range(0, 10):
+                        if 60 + 30 * i < pos_x < 90 + 30 * i:
+                            user_index_y = i
+                    for j in range(0, 10):
+                        if 100 + 30 * j < pos_y < 130 + 30 * j:
+                            user_index_x = j
+
+                    user.set_boat_piece(user_index_x, user_index_y)
+                    user.print_array_console()
+
                 if event.type == pygame.QUIT:
+                    self.isPlaying = False
                     pygame.quit()
                     sys.exit()
             pygame.display.flip()
-            screen.fill(white)
 
     def button_clicked(self, pos_x, pos_y, butt_pos_x, butt_pos_y):
         """
@@ -201,12 +220,10 @@ class Board(object):
     def blit_caption_board(nr_pos_x, nr_pos_y, txt_pos_x, txt_pos_y):
         """
         Wyświetla współrzędne tablicy gry
-
         :param nr_pos_x: pozycja x z której ma zacząć wyświetlać współrzędne cyfr
         :param nr_pos_y: pozycja y z której ma zacząć wyświetlać współrzędne cyfr
         :param txt_pos_x: pozycja x z której ma zacząć wyświetlać współrzędne liter
         :param txt_pos_y: pozycja y z której ma zacząć wyświetlać współrzędne liter
-
         """
         numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         words = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
