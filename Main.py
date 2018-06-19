@@ -87,8 +87,12 @@ class GameManagement(object):
                         if 100 + 30 * j < pos_y < 130 + 30 * j:
                             user_index_x = j
 
+
                     user.set_boat_piece(user_index_x, user_index_y)
                     user.print_array_console()
+
+                    print('user_index_x', pos_x)
+                    print('user_index_y', pos_y)
 
                 if event.type == pygame.QUIT:
                     self.isPlaying = False
@@ -179,6 +183,9 @@ class Board(object):
             pos_x = 60
             pos_y += distance
         self.blit_caption_board(40, 108, 70, 80)
+
+    #def draw_ship_type(self): x = 60, y = 440
+
 
     def draw_board_opponent(self):
         """Wyświetla planszę przeciwnika, znajduje się po prawej stronie"""
