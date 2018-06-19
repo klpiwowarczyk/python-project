@@ -1,6 +1,7 @@
 import pygame
 import sys
 from pprint import pprint as pp
+from User import User
 
 pygame.init()
 
@@ -181,5 +182,9 @@ class Board(object):
 if __name__ == "__main__":
     game = GameManagement()
     game.game_intro()
+    user = User
+    user.create_user_array()
+    user.print_array_console()
+
 
 

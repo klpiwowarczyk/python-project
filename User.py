@@ -46,11 +46,11 @@ def main():
     print('')
     user.set_boat_piece(5,5)
     user.set_boat_piece(4,4)
-    user.print_array_console()
-    print('')
-    user.shot_in_boat_piece(4,4)
-    user.shot_in_boat_piece(1,1)
-    user.print_array_console()
+    # user.print_array_console()
+    # print('')
+    # user.shot_in_boat_piece(4,4)
+    # user.shot_in_boat_piece(1,1)
+    # user.print_array_console()
 
 main()
 
