@@ -80,10 +80,10 @@ class GameManagement(object):
                 if pygame.mouse.get_pressed() == (1, 0, 0):
                     pos_x, pos_y = pygame.mouse.get_pos()
 
-                    for i in range(0, 9):
+                    for i in range(0, 10):
                         if 60 + 30 * i < pos_x < 90 + 30 * i:
                             user_index_y = i
-                    for j in range(0, 9):
+                    for j in range(0, 10):
                         if 100 + 30 * j < pos_y < 130 + 30 * j:
                             user_index_x = j
 
