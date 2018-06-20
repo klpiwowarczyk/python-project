@@ -146,7 +146,7 @@ class GameManagement(object):
 
                         user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction, screen)
                         self.dec_ships_amount()
-                        self.dec_ships_type_aumount()
+                        self.dec_ships_type_amount()
 
                         user.print_array_console()
 
@@ -158,13 +158,8 @@ class GameManagement(object):
 
     def dec_ships_amount(self):
         self.boats_amount -= 1
-        screen.fill(white)
 
-        self.board.draw_board_player()
-        self.board.draw_board_opponent()
-        self.draw_ship_type_buttons()
-
-    def dec_ships_type_aumount(self):
+    def dec_ships_type_amount(self):
         if self.ship_type == 1:
             self.ship_type_1_amount -= 1
         elif self.ship_type == 2:
@@ -175,10 +170,10 @@ class GameManagement(object):
             self.ship_type_4_amount -= 1
         else:
             print("Wybierz statek!")
-        screen.fill(white)
+        #screen.fill(white)
 
-        self.board.draw_board_player()
-        self.board.draw_board_opponent()
+        # self.board.draw_board_player()
+        # self.board.draw_board_opponent()
         self.draw_ship_type_buttons()
 
     def set_direction(self, pos_x, pos_y):
@@ -252,16 +247,24 @@ class GameManagement(object):
         screen.blit(text_surface, (pos_x, pos_y))
 
     def draw_ship_type_buttons(self):
+
         self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=60, pos_y=430, text="Wybierz kierunek i rodzaj statku do umieszczenia na tablicy")
+        self.draw_button(white,100,455,100,100)
         self.draw_button((100, 100, 100), 60, 450, 30, 25)
         self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=100, pos_y=455,
                        text="pozostało : " + str(self.ship_type_1_amount))
+
+        self.draw_button(white,130,495,100,100)
         self.draw_button((100, 100, 100), 60, 490, 60, 25)
         self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=130, pos_y=495,
                        text="pozostało : "  + str(self.ship_type_2_amount))
+
+        self.draw_button(white,160,535,100,100)
         self.draw_button((100, 100, 100), 60, 530, 90, 25)
         self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=160, pos_y=535,
                        text="pozostało : " + str(self.ship_type_3_amount))
+
+        self.draw_button(white,190,575,100,100)
         self.draw_button((100, 100, 100), 60, 570, 120, 25)
         self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=190, pos_y=575,
                        text="pozostało : " + str(self.ship_type_4_amount))
