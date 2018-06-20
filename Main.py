@@ -19,6 +19,8 @@ class GameManagement(object):
         self.ships = Ships()
         self.ships.make_group_sprites()
         self.isPlaying = True  # po skończonej grze gamePlay ustawiane będzie na False
+        self.ship_direction = "poziomo"
+        self.ship_type = 1
 
     def game_intro(self):
         """ Funkcja zarządzająca oknem początkowym """
@@ -125,25 +127,45 @@ class GameManagement(object):
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     pos_x, pos_y = pygame.mouse.get_pos()
 
-                    for i in range(0, 10):
-                        if 60 + 30 * i < pos_x < 90 + 30 * i:
-                            user_index_y = i
-                    for j in range(0, 10):
-                        if 100 + 30 * j < pos_y < 130 + 30 * j:
-                            user_index_x = j
+                    self.set_direction(pos_x, pos_y)
+                    self.set_ship_type(pos_x, pos_y)
 
+                    if 60 < pos_x < 360 and  100 < pos_y < 400:
+                        for i in range(0, 10):
+                            if 60 + 30 * i < pos_x < 90 + 30 * i:
+                                user_index_y = i
+                        for j in range(0, 10):
+                            if 100 + 30 * j < pos_y < 130 + 30 * j:
+                                user_index_x = j
 
-                    user.set_boat_piece(user_index_x, user_index_y)
-                    user.print_array_console()
+                        user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction)
+                        user.print_array_console()
 
-                    print('user_index_x', pos_x)
-                    print('user_index_y', pos_y)
+                        print('user_index_x', pos_x)
+                        print('user_index_y', pos_y)
 
                 if event.type == pygame.QUIT:
                     self.isPlaying = False
                     pygame.quit()
                     sys.exit()
             pygame.display.flip()
+
+    def set_direction(self, pos_x, pos_y):
+        if 300 < pos_x < 400 and 460 < pos_y < 485:
+            self.ship_direction = "poziomo"
+
+        if 300 < pos_x < 400 and 500 < pos_y < 525:
+            self.ship_direction = "pionowo"
+
+    def set_ship_type(self, pos_x, pos_y):
+        if 60 < pos_x < 90 and 450 < pos_y < 475:
+            self.ship_type = 1
+        if 60 < pos_x < 120 and 490 < pos_y < 515:
+            self.ship_type = 2
+        if 60 < pos_x < 150 and 530 < pos_y < 555:
+            self.ship_type = 3
+        if 60 < pos_x < 180 and 570 < pos_y < 595:
+            self.ship_type = 4
 
     def button_clicked(self, pos_x, pos_y, butt_pos_x, butt_pos_y):
         """
@@ -169,8 +191,6 @@ class GameManagement(object):
             if i < 1:
                 self.ships.display_single_sprite(screen, 350+distance,350,4)
             distance += 50
-
-
 
     @staticmethod
     def draw_button(color, pos_x, pos_y, width, height):
@@ -201,12 +221,19 @@ class GameManagement(object):
         screen.blit(text_surface, (pos_x, pos_y))
 
     def draw_ship_type_buttons(self):
-        #x = 60, y = 440
-        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=60, pos_y=430, text="Wybierz rodzaj statku do umieszczenia na tablicy")
+        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=60, pos_y=430, text="Wybierz kierunek i rodzaj statku do umieszczenia na tablicy")
         self.draw_button((100, 100, 100), 60, 450, 30, 25)
         self.draw_button((100, 100, 100), 60, 490, 60, 25)
         self.draw_button((100, 100, 100), 60, 530, 90, 25)
         self.draw_button((100, 100, 100), 60, 570, 120, 25)
+
+        self.draw_button((0, 153, 51), 300, 460, 100, 25)
+        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=320, pos_y=465,
+                       text="POZIOMO")
+
+        self.draw_button((179, 179, 0), 300, 500, 100, 25)
+        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=320, pos_y=505,
+                       text="PIONOWO")
 
 class Board(object):
     """Klasa w której tworzony jest obiekt plansza,
