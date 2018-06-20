@@ -138,7 +138,7 @@ class GameManagement(object):
                             if 100 + 30 * j < pos_y < 130 + 30 * j:
                                 user_index_x = j
 
-                        user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction)
+                        user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction, screen)
                         user.print_array_console()
 
                 if event.type == pygame.QUIT:

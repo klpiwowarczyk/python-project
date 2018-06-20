@@ -25,9 +25,11 @@ class User():
    # def set_boat(self, x, y):
         # wstawienie calego statku, jakaś wiadomość, że wstawiony cały
 
-    def set_boat(self, x, y, ship_type, direction):
+    def set_boat(self, x, y, ship_type, direction,screen):
+        from Ships import Ships
         # if(nie mozna) return
-
+        ship = Ships()
+        ship.make_group_sprites()
         for i in range(1, 5):
             if ship_type == i:
                 for j in range(0, i):
@@ -37,6 +39,12 @@ class User():
                         self.user_array[x][y + j] = 1
                     else:
                         print("Zły kierunek")
+        if direction == "pionowo":
+            #print(x*30+60)
+            ship.display_single_sprite(screen,y*30+60,x*30+100,ship_type)
+        if direction == "poziomo":
+            #ship.display_single_sprite(screen,y*30+60,x*30+100,ship_type)
+            ship.display_rotated_sprite(screen,y*30+60,x*30+100,90,ship_type)
 
       #  self.user_array[x][y] = 1
 
