@@ -25,7 +25,7 @@ class GameManagement(object):
         self.ship_type_2_amount = 3
         self.ship_type_3_amount = 2
         self.ship_type_4_amount = 1
-        self.boats_amount = 10
+        self.ships_amount = 10
 
 
     def game_intro(self):
@@ -136,19 +136,21 @@ class GameManagement(object):
                     self.set_direction(pos_x, pos_y)
                     self.set_ship_type(pos_x, pos_y)
 
-                    if 60 < pos_x < 360 and 100 < pos_y < 400:
-                        for i in range(0, 10):
-                            if 60 + 30 * i < pos_x < 90 + 30 * i:
-                                user_index_y = i
-                        for j in range(0, 10):
-                            if 100 + 30 * j < pos_y < 130 + 30 * j:
-                                user_index_x = j
+                    if self.ships_amount > 0:
+                        if 60 < pos_x < 360 and 100 < pos_y < 400:
+                            for i in range(0, 10):
+                                if 60 + 30 * i < pos_x < 90 + 30 * i:
+                                    user_index_y = i
+                            for j in range(0, 10):
+                                if 100 + 30 * j < pos_y < 130 + 30 * j:
+                                    user_index_x = j
 
-                        user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction, screen)
-                        self.dec_ships_amount()
-                        self.dec_ships_type_amount()
+                            if self.ship_type:
+                                user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction, screen)
+                                self.dec_ships_type_amount()
+                                self.dec_ships_amount()
 
-                        user.print_array_console()
+                            user.print_array_console()
 
                 if event.type == pygame.QUIT:
                     self.isPlaying = False
@@ -157,23 +159,30 @@ class GameManagement(object):
             pygame.display.flip()
 
     def dec_ships_amount(self):
-        self.boats_amount -= 1
+        if self.ships_amount > 0:
+            self.ships_amount -= 1
 
     def dec_ships_type_amount(self):
-        if self.ship_type == 1:
+        if self.ship_type == 1 and self.ship_type_1_amount > 0:
             self.ship_type_1_amount -= 1
-        elif self.ship_type == 2:
+        elif self.ship_type == 2 and self.ship_type_2_amount > 0:
             self.ship_type_2_amount -= 1
-        elif self.ship_type == 3:
+        elif self.ship_type == 3 and self.ship_type_3_amount > 0:
             self.ship_type_3_amount -= 1
-        elif self.ship_type == 4:
+        elif self.ship_type == 4 and self.ship_type_4_amount > 0:
             self.ship_type_4_amount -= 1
         else:
             print("Wybierz statek!")
-        #screen.fill(white)
 
-        # self.board.draw_board_player()
-        # self.board.draw_board_opponent()
+        if self.ship_type_1_amount == 0 and self.ship_type == 1:
+            self.ship_type = False
+        if self.ship_type_2_amount == 0 and self.ship_type == 2:
+            self.ship_type = False
+        if self.ship_type_3_amount == 0 and self.ship_type == 3:
+            self.ship_type = False
+        if self.ship_type_4_amount == 0 and self.ship_type == 4:
+            self.ship_type = False
+
         self.draw_ship_type_buttons()
 
     def set_direction(self, pos_x, pos_y):
