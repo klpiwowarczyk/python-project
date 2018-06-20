@@ -130,7 +130,7 @@ class GameManagement(object):
                     self.set_direction(pos_x, pos_y)
                     self.set_ship_type(pos_x, pos_y)
 
-                    if 60 < pos_x < 360 and  100 < pos_y < 400:
+                    if 60 < pos_x < 360 and 100 < pos_y < 400:
                         for i in range(0, 10):
                             if 60 + 30 * i < pos_x < 90 + 30 * i:
                                 user_index_y = i
@@ -140,9 +140,6 @@ class GameManagement(object):
 
                         user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction)
                         user.print_array_console()
-
-                        print('user_index_x', pos_x)
-                        print('user_index_y', pos_y)
 
                 if event.type == pygame.QUIT:
                     self.isPlaying = False
@@ -223,9 +220,17 @@ class GameManagement(object):
     def draw_ship_type_buttons(self):
         self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=60, pos_y=430, text="Wybierz kierunek i rodzaj statku do umieszczenia na tablicy")
         self.draw_button((100, 100, 100), 60, 450, 30, 25)
+        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=100, pos_y=455,
+                       text="pozostało : 4")
         self.draw_button((100, 100, 100), 60, 490, 60, 25)
+        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=130, pos_y=495,
+                       text="pozostało : 3")
         self.draw_button((100, 100, 100), 60, 530, 90, 25)
+        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=160, pos_y=535,
+                       text="pozostało : 2")
         self.draw_button((100, 100, 100), 60, 570, 120, 25)
+        self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=190, pos_y=575,
+                       text="pozostało : 1")
 
         self.draw_button((0, 153, 51), 300, 460, 100, 25)
         self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=320, pos_y=465,
