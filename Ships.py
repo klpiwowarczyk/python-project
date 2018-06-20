@@ -33,15 +33,14 @@ class Ships:
     def update_sprites(self):
         self.deckers_list.update()
 
-    def display_rotated_sprite(self, screen, x, y, angle, ship_size):
+    def display_rotated_sprite(self, screen,x,y, angle, ship_size):
         count = 1
         for i in self.deckers_list:
-            if count == 4:
+            if count == ship_size:
                 i.image = pygame.transform.rotate(i.image,angle)
-                self.display_single_sprite(screen, x, y, ship_size)
+                self.display_single_sprite(screen,x,y,ship_size)
                 i.image = pygame.transform.rotate(i.image,angle)
             count+=1
-
 
     def make_group_sprites(self):
         ship1 = self.make_sprite("ship1x1.png")
