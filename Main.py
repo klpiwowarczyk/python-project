@@ -96,14 +96,14 @@ class GameManagement(object):
                 self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2,"Jesteś pierwszym graczem więc będziesz zaczynał")
                 pygame.display.update()
                 pygame.time.delay(1000)
-                self.game_section()
+                self.game_section(client)
             elif msg == 'start2':
                 screen.fill(white)
                 self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Znaleziono gracza! Następuje przekierowanie do gry...")
                 self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2,"Jesteś drugim graczem, przeciwnik zaczyna.")
                 pygame.display.update()
                 pygame.time.delay(1000)
-                self.game_section()
+                self.game_section(client)
 
         else:
             screen.fill(white)
@@ -112,7 +112,7 @@ class GameManagement(object):
             pygame.time.delay(1000)
 
 
-    def game_section(self):
+    def game_section(self, client):
         """Funkcja zarządzająca oknem gry"""
 
         pygame.display.update()
@@ -125,10 +125,16 @@ class GameManagement(object):
         user_index_x = 0
         user_index_y = 0
 
+        shot_index_x = False
+        shot_index_y = False
+
         user = User()
         user.create_user_array()
 
         while self.isPlaying:
+            #message = client.rcv_message()
+            #print('message', message)
+
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     pos_x, pos_y = pygame.mouse.get_pos()
@@ -136,8 +142,8 @@ class GameManagement(object):
                     self.set_direction(pos_x, pos_y)
                     self.set_ship_type(pos_x, pos_y)
 
-                    if self.ships_amount > 0:
-                        if 60 < pos_x < 360 and 100 < pos_y < 400:
+                    if 60 < pos_x < 360 and 100 < pos_y < 400:
+                        if self.ships_amount > 0:
                             for i in range(0, 10):
                                 if 60 + 30 * i < pos_x < 90 + 30 * i:
                                     user_index_y = i
@@ -152,11 +158,23 @@ class GameManagement(object):
 
                             user.print_array_console()
 
+                    elif 780 < pos_x < 1080 and 100 < pos_y < 400:
+                        for i in range(0, 10):
+                            if 780 + 30 * i < pos_x < 810 + 30 * i:
+                                shot_index_x = i
+                        for j in range(0, 10):
+                            if 100 + 30 * j < pos_y < 130 + 30 * j:
+                                shot_index_y = j
+                        self.shot_in_opponent_ship(client, shot_index_x, shot_index_y)
+
                 if event.type == pygame.QUIT:
                     self.isPlaying = False
                     pygame.quit()
                     sys.exit()
             pygame.display.flip()
+
+    def shot_in_opponent_ship(self, client, x, y):
+        client.send_message((x, y))
 
     def dec_ships_amount(self):
         if self.ships_amount > 0:
