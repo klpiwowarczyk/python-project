@@ -43,7 +43,8 @@ class User():
             #print(x*30+60)
             ship.display_single_sprite(screen,y*30+60,x*30+100,ship_type)
         if direction == "poziomo":
-            ship.display_single_sprite(screen,y*30+60,x*30+100,ship_type)
+            #ship.display_single_sprite(screen,y*30+60,x*30+100,ship_type)
+            ship.display_rotated_sprite(screen,y*30+60,x*30+100,90,ship_type)
 
       #  self.user_array[x][y] = 1
 
