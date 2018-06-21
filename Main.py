@@ -151,7 +151,7 @@ class GameManagement(object):
                                 if 100 + 30 * j < pos_y < 130 + 30 * j:
                                     user_index_x = j
 
-                            if self.ship_type:
+                            if self.ship_type and user.check_boat_około(user_index_x,user_index_y,self.ship_type,self.set_direction==True and user.check_boat_w_bok(user_index_x,user_index_y,self.ship_type,self.set_direction)==True):
                                 user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction, screen)
                                 self.dec_ships_type_amount()
                                 self.dec_ships_amount()
