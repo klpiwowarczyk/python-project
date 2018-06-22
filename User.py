@@ -26,16 +26,24 @@ class User():
         # wstawienie calego statku, jakaś wiadomość, że wstawiony cały
 
     def check_boat_około(self,x,y, ship_type,direction):
+        if(x==9 or y==9):
+            return True
         if (self.user_array[x][y] == 0):
-            if (x >= 0 and x + ship_type <= 9 and y >= 0 and y + ship_type <= 9):
+            if ((x >= 0 and x + ship_type <= 9) or (y >= 0 and y + ship_type <= 9)):
                 for i in range(x, x + ship_type):
                     for j in range(y, y + ship_type):
-                        if ((x >= 0 and x + ship_type <= 9 and y >= 0 and y + ship_type <= 9)):
+                        if ((x >= 0 and x + ship_type<= 9) or (y >= 0 and y + ship_type <= 9)):
                             if (self.user_array[i + 1][j] == 0 and self.user_array[i - 1][j] == 0
                                     and self.user_array[i][j - 1] == 0 and self.user_array[i][j + 1] == 0
                                     and self.user_array[i - 1][j - 1] == 0 and self.user_array[i - 1][j + 1] == 0
                                     and self.user_array[i + 1][j + 1] == 0 and self.user_array[i + 1][j - 1] == 0):
-                                return True
+                                if direction == "pionowo":
+                                    if (self.user_array[x+ship_type-1][y] == 0 and self.user_array[x+ship_type][y] == 0 and self.user_array[x+ship_type-2][y] == 0):
+                                        return True
+
+                                elif direction == "poziomo":
+                                    if (self.user_array[x][y+ship_type-1] == 0 and self.user_array[x][y+ship_type] == 0 and self.user_array[x][y+ship_type-2] == 0):
+                                        return True
                             elif (self.user_array[i + 1][j] == 1 or self.user_array[i - 1][j] == 1
                                   or self.user_array[i][j - 1] == 1 or self.user_array[i][j + 1] == 1
                                   or self.user_array[i - 1][j - 1] == 1 or self.user_array[i - 1][j + 1] == 1
@@ -45,33 +53,6 @@ class User():
                 return False
         else:
             return  False
-    def check_boat_w_bok(self,x,y, ship_type,direction):
-        for a in range(1, 5):
-            if ship_type == a:
-                for z in range(0, a):
-                    if direction == "pionowo":
-                        for i in range(x, x + ship_type):
-                            for j in range(y, y + ship_type):
-                                if (self.user_array[i + 1][j] == 0
-                                        and self.user_array[i][j - 1] == 0 and self.user_array[i][j + 1] == 0
-                                        and self.user_array[i - 1][j - 1] == 0 and self.user_array[i - 1][j + 1] == 0
-                                        and self.user_array[i + 1][j + 1] == 0 and self.user_array[i + 1][j - 1] == 0):
-                                    return True
-
-
-                    elif direction == "poziomo":
-                        for i in range(x, x + ship_type):
-                            for j in range(y, y + ship_type):
-                                i+=1
-                                if (self.user_array[i + 1][j] == 0 and self.user_array[i - 1][j] == 0
-                                        and self.user_array[i][j + 1] == 0
-                                        and self.user_array[i - 1][j - 1] == 0 and self.user_array[i - 1][j + 1] == 0
-                                        and self.user_array[i + 1][j + 1] == 0 and self.user_array[i + 1][j - 1] == 0):
-                                    return True
-
-                    else:
-                        return False
-
     def set_boat(self, x, y, ship_type, direction,screen):
         from Ships import Ships
         # if(nie mozna) return
