@@ -1,4 +1,5 @@
-import pickle, socket
+import pickle
+import socket, select
 import threading
 import pprint
 from threading import Lock
@@ -20,6 +21,7 @@ class Server(object):
         self.sock.bind((self.host,self.port))
         self.count_players = 0
         self.buffer_size = 1024
+        self.input = [self.sock]
         print('Server started ! Waiting for connections...')
 
     def listen(self):
@@ -45,11 +47,13 @@ class Server(object):
             else:
                 pair_of_players[1].append(conn)
             lock.release()
-        print(pair_of_players)
+
         print('----------------------------------------------------')
         print('Okay ! We got a pair of players matched.\n Let`s go!')
         print('----------------------------------------------------')
         self.start_game(pair_of_players[0][0], pair_of_players[1][0])
+
+
 
     def start_game(self, conn1, conn2):
         try:

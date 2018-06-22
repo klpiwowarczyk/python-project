@@ -67,7 +67,7 @@ class GameManagement(object):
                     if self.button_clicked(pos_x, pos_y, 300, 250):
                         self.game_section()
                     if self.button_clicked(pos_x, pos_y, 700, 250):
-                        self.multiplayer_section()
+                        game_choice=False
                 pygame.display.update()
 
     def fill_game_choice(self):
@@ -80,6 +80,9 @@ class GameManagement(object):
 
     def multiplayer_section(self):
         import Client
+        from select import select
+        from multiprocessing.pool import ThreadPool
+        import threading
         screen.fill(white)
         self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Oczekiwanie na połączenie z serwerem...")
         pygame.display.update()
@@ -151,7 +154,7 @@ class GameManagement(object):
                                 if 100 + 30 * j < pos_y < 130 + 30 * j:
                                     user_index_x = j
 
-                            if self.ship_type:
+                            if self.ship_type and user.check_boat_około(user_index_x,user_index_y,self.ship_type,self.ship_direction):
                                 user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction, screen)
                                 self.dec_ships_type_amount()
                                 self.dec_ships_amount()
@@ -384,3 +387,4 @@ class Board(object):
 if __name__ == "__main__":
     game = GameManagement()
     game.game_intro()
+    game.multiplayer_section()

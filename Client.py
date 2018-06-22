@@ -1,13 +1,24 @@
 import socket
 import pickle
+import threading
+from queue import Queue
 
 
 class Client(object):
     def __init__(self, host, port):
+        threading.Thread.__init__(self)
         self.host = host
         self.port = port
         self.sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.buffer_size = 1024
+
+    def run(self):
+        try:
+            self.sock.connect((self.host,self.port))
+            return True
+
+        except:
+            print("Nie udało się połączyć z serwerem.")
 
     def connect_server(self):
         try:
@@ -23,6 +34,9 @@ class Client(object):
         except:
             print("Nie jesteś połączony z serwerem !")
 
+
+
+
     def send_message(self, msg):
         message = pickle.dumps(msg)
         try:
@@ -32,9 +46,9 @@ class Client(object):
 
     def rcv_message(self):
         msg = self.sock.recv(self.buffer_size)
-        message = pickle.loads(msg)
-
-        return message
+        if msg:
+            message = pickle.loads(msg)
+            return message
 
     def start_game(self):
         try:
