@@ -21,6 +21,7 @@ class User():
             for j in range(self.size_y):
                 print(self.user_array[i][j], end=" ")
             print('')
+        print("\n")
 
    # def select_boat(self):
         # wybranie rodzaju statku

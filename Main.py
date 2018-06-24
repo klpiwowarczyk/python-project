@@ -161,14 +161,34 @@ class GameManagement(object):
 
                             user.print_array_console()
 
-                    elif 780 < pos_x < 1080 and 100 < pos_y < 400:
-                        for i in range(0, 10):
-                            if 780 + 30 * i < pos_x < 810 + 30 * i:
-                                shot_index_x = i
-                        for j in range(0, 10):
-                            if 100 + 30 * j < pos_y < 130 + 30 * j:
-                                shot_index_y = j
-                        self.shot_in_opponent_ship(client, shot_index_x, shot_index_y)
+                        #po wybraniu wszystkich
+                        if self.ships_amount == 0:
+                            print("wprowadzono wszystkie, ostateczny wybor:")
+                            choiceTable = client.send_message(user.print_array_console())
+                            client.send_message("ready")
+                            if(client.rcv_message() == "ready"):
+                                print("user ready")
+
+                                
+                            #client.start_game()
+
+                            #if 780 < pos_x < 1080 and 100 < pos_y < 400:
+#                                for i in range(0, 10):
+#                                   if 780 + 30 * i < pos_x < 810 + 30 * i:
+ #                                       shot_index_x = i
+  #                              for j in range(0, 10):
+   #                                 if 100 + 30 * j < pos_y < 130 + 30 * j:
+    #                                    shot_index_y = j
+     #                           self.shot_in_opponent_ship(client, shot_index_x, shot_index_y)
+
+                    #elif 780 < pos_x < 1080 and 100 < pos_y < 400:
+                        #for i in range(0, 10):
+                            #if 780 + 30 * i < pos_x < 810 + 30 * i:
+                                #shot_index_x = i
+                        #for j in range(0, 10):
+                            #if 100 + 30 * j < pos_y < 130 + 30 * j:
+                                #shot_index_y = j
+                        #self.shot_in_opponent_ship(client, shot_index_x, shot_index_y)
 
                 if event.type == pygame.QUIT:
                     self.isPlaying = False
