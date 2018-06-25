@@ -75,12 +75,19 @@ class User():
         if direction == "poziomo":
             ship.display_rotated_sprite(screen,y*30+60,x*30+100,90,ship_type)
 
-    def shot_in_boat_piece(self, x, y):
+    def shot_in_boat_piece(self, x, y, screen):
+        from Ships import Ships
+        ship = Ships()
+        ship.make_group_sprites()
+        
         if self.user_array[x][y] == 1:
             self.lost_boat_piece(x, y)
+            ship.display_single_sprite(screen,x*30+780,y*30+100,1)
+            print("lost boat piece")
         elif self.user_array[x][y] == 0:
             # przeciwnik nie trafił, jakoś to pokazać i przełączyć, że User strzela
-            self.user_array[x][y] = 'x'
+            ship.display_single_sprite(screen,x*30+780,y*30+100,5)
+            print("not lost boat piece")
 
     def lost_boat_piece(self, x, y):
         self.user_array[x][y] = -1
