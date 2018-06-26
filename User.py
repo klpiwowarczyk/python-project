@@ -1,32 +1,37 @@
 import pygame
-import sys
-import threading
+from Ships import Ships
 
 pygame.init()
-
-
 
 class User():
     def __init__(self):
         self.size_x = 10
         self.size_y = 10
         self.user_array = []
+        self.ship = Ships()
+        self.ship.make_group_sprites()
+        self.check_array = []
+        self.pieces_to_shot = 20
 
     def create_user_array(self):
         for i in range(self.size_x):
             self.user_array.append([0 for i in range(self.size_y)])
+
+    def create_check_array(self):
+        for i in range(self.size_x):
+            self.check_array.append([0 for i in range(self.size_y)])
+
+
 
     def print_array_console(self):
         for i in range(self.size_x):
             for j in range(self.size_y):
                 print(self.user_array[i][j], end=" ")
             print('')
+        print("\n")
+    def return_array(self):
+        return self.user_array
 
-   # def select_boat(self):
-        # wybranie rodzaju statku
-
-   # def set_boat(self, x, y):
-        # wstawienie calego statku, jakaś wiadomość, że wstawiony cały
     def check_boat_około(self, x, y, ship_type, direction):
 
         can_be_placed = True
@@ -59,9 +64,7 @@ class User():
         return can_be_placed
 
     def set_boat(self, x, y, ship_type, direction,screen):
-        from Ships import Ships
-        ship = Ships()
-        ship.make_group_sprites()
+
         for j in range(ship_type):
             if direction == "pionowo":
                 self.user_array[x + j][y] = 1
@@ -70,18 +73,23 @@ class User():
             else:
                 print("Zły kierunek")
         if direction == "pionowo":
-            ship.display_single_sprite(screen,y*30+60,x*30+100,ship_type)
+            self.ship.display_single_sprite(screen,y*30+60,x*30+100,ship_type)
         if direction == "poziomo":
-            ship.display_rotated_sprite(screen,y*30+60,x*30+100,90,ship_type)
+            self.ship.display_rotated_sprite(screen,y*30+60,x*30+100,90,ship_type)
 
-    def shot_in_boat_piece(self, x, y):
-        if self.user_array[x][y] == 1:
-            self.lost_boat_piece(x, y)
-        elif self.user_array[x][y] == 0:
+    def is_it_end(self):
+        return self.pieces_to_shot == 0
+
+    def shot_in_boat_piece(self, x, y, enemy_array, screen):
+
+        if enemy_array[y][x] == 1 and self.check_array[y][x] == 0:
+            #self.lost_boat_piece(x, y)
+            self.ship.display_single_sprite(screen,x*30+780,y*30+100,1)
+            self.check_array[y][x] = 1
+            self.pieces_to_shot -= 1
+            print("lost boat piece")
+        elif enemy_array[y][x] == 0 and self.check_array[y][x] == 0:
             # przeciwnik nie trafił, jakoś to pokazać i przełączyć, że User strzela
-            self.user_array[x][y] = 'x'
-
-    def lost_boat_piece(self, x, y):
-        self.user_array[x][y] = -1
-
-
+            self.ship.display_single_sprite(screen,x*30+780,y*30+100,5)
+            self.check_array[y][x] = 1
+            print("not lost boat piece")

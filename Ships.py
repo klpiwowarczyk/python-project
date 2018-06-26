@@ -1,6 +1,6 @@
 import pygame
 import GameObject
-import os
+
 
 class Ships:
     def __init__(self):
@@ -54,5 +54,8 @@ class Ships:
 
         ship4 = self.make_sprite("ship4x4.png")
         self.add_to_group(ship4)
+
+        ship5 = self.make_sprite("dot.png")
+        self.add_to_group(ship5)
 
 

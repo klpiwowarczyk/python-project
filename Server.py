@@ -3,6 +3,8 @@ import socket, select
 import threading
 import pprint
 from threading import Lock
+from multiprocessing import Pool
+import pygame
 
 
 lock = Lock()
@@ -26,7 +28,13 @@ class Server(object):
 
     def listen(self):
         self.sock.listen(5)
-        conn, addr = self.sock.accept()
+        conn = None
+        while not conn:
+            try:
+                conn, addr = self.sock.accept()
+                pygame.event.pump()
+            except:
+                None
         print('-----------------------------')
         print('Client accepted !\n Welcome !')
         print('-----------------------------')
@@ -59,13 +67,21 @@ class Server(object):
         try:
             self.send_message(conn1,'start1')
             self.send_message(conn2,'start2')
+            msg1 = self.recv_msg(conn1)
+            msg2 = self.recv_msg(conn2)
+            self.send_message(conn1,msg2)
+            self.send_message(conn2,msg1)
+            msg1 = self.recv_msg(conn1)
+            msg2 = self.recv_msg(conn2)
+            self.send_message(conn1,msg2)
+            self.send_message(conn2,msg1)
             while True:
                 msg = self.recv_msg(conn1)
                 self.send_message(conn2, msg)
                 msg = self.recv_msg(conn2)
                 self.send_message(conn1, msg)
-        except Exception :
-            print("Unexpected error")
+        except Exception  as e:
+            print(e)
 
     def send_message(self, conn, msg):
         message = pickle.dumps(msg)

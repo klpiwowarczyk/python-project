@@ -2,6 +2,7 @@ import sys, os
 import pygame
 from Ships import Ships
 from User import User
+
 # colors
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -80,9 +81,6 @@ class GameManagement(object):
 
     def multiplayer_section(self):
         import Client
-        from select import select
-        from multiprocessing.pool import ThreadPool
-        import threading
         screen.fill(white)
         self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Oczekiwanie na połączenie z serwerem...")
         pygame.display.update()
@@ -96,18 +94,17 @@ class GameManagement(object):
             if msg == 'start1':
                 screen.fill(white)
                 self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Znaleziono gracza! Następuje przekierowanie do gry...")
-                self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2,"Jesteś pierwszym graczem więc będziesz zaczynał")
+                self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-20,"             Zaczynasz pierwszy !")
                 pygame.display.update()
                 pygame.time.delay(1000)
-                self.game_section(client)
-            elif msg == 'start2':
+                self.game_section(client,1)
+            if msg == 'start2':
                 screen.fill(white)
                 self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Znaleziono gracza! Następuje przekierowanie do gry...")
-                self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2,"Jesteś drugim graczem, przeciwnik zaczyna.")
+                self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-20,"             Zaczynasz drugi !")
                 pygame.display.update()
                 pygame.time.delay(1000)
-                self.game_section(client)
-
+                self.game_section(client,2)
         else:
             screen.fill(white)
             self.draw_text(self.SCREEN_W/2-200,self.SCREEN_H/2-50,"Nie udało się połączyć z serwerem !")
@@ -115,7 +112,7 @@ class GameManagement(object):
             pygame.time.delay(1000)
 
 
-    def game_section(self, client):
+    def game_section(self, client, player):
         """Funkcja zarządzająca oknem gry"""
 
         pygame.display.update()
@@ -128,15 +125,20 @@ class GameManagement(object):
         user_index_x = 0
         user_index_y = 0
 
-        shot_index_x = False
-        shot_index_y = False
+        shot_index_x = None
+        shot_index_y = None
 
         user = User()
         user.create_user_array()
+        user.create_check_array()
+
+        status = None
+        end = False
+
+        turn = player
+        enemy_array = []
 
         while self.isPlaying:
-            #message = client.rcv_message()
-            #print('message', message)
 
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -144,40 +146,66 @@ class GameManagement(object):
 
                     self.set_direction(pos_x, pos_y)
                     self.set_ship_type(pos_x, pos_y)
+                    if self.ships_amount > 0:
+                        if 60 < pos_x < 360 and 100 < pos_y < 400:
+                            if self.ships_amount > 0:
+                                for i in range(0, 10):
+                                    if 60 + 30 * i <= pos_x < 90 + 30 * i:
+                                        user_index_y = i
+                                for j in range(0, 10):
+                                    if 100 + 30 * j <= pos_y < 130 + 30 * j:
+                                        user_index_x = j
 
-                    if 60 < pos_x < 360 and 100 < pos_y < 400:
-                        if self.ships_amount > 0:
-                            for i in range(0, 10):
-                                if 60 + 30 * i < pos_x < 90 + 30 * i:
-                                    user_index_y = i
-                            for j in range(0, 10):
-                                if 100 + 30 * j < pos_y < 130 + 30 * j:
-                                    user_index_x = j
-
-                            if self.ship_type and user.check_boat_około(user_index_x,user_index_y,self.ship_type,self.ship_direction):
-                                user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction, screen)
-                                self.dec_ships_type_amount()
-                                self.dec_ships_amount()
-
-                            user.print_array_console()
-
-                    elif 780 < pos_x < 1080 and 100 < pos_y < 400:
-                        for i in range(0, 10):
-                            if 780 + 30 * i < pos_x < 810 + 30 * i:
-                                shot_index_x = i
-                        for j in range(0, 10):
-                            if 100 + 30 * j < pos_y < 130 + 30 * j:
-                                shot_index_y = j
-                        self.shot_in_opponent_ship(client, shot_index_x, shot_index_y)
+                                if self.ship_type and user.check_boat_około(user_index_x,user_index_y,self.ship_type,self.ship_direction):
+                                    user.set_boat(user_index_x, user_index_y, self.ship_type, self.ship_direction, screen)
+                                    self.dec_ships_type_amount()
+                                    self.dec_ships_amount()
+                    pygame.display.flip()
+                        #po wybraniu wszystkich
+                    if self.ships_amount == 0:
+                        if not status:
+                            client.send_message("ready")
+                            status = client.rcv_message()
+                        if not enemy_array:
+                            client.send_message(user.user_array)
+                            enemy_array = client.rcv_message()
+                        elif not end and status:
+                            if turn == 1:
+                                if 780 < pos_x < 1080 and 100 < pos_y < 400:
+                                    for i in range(0, 10):
+                                        if 780 + 30 * i <= pos_x < 810 + 30 * i:
+                                            shot_index_x = i
+                                    for j in range(0, 10):
+                                        if 100 + 30 * j <= pos_y < 130 + 30 * j:
+                                            shot_index_y = j
+                                    print("trafiono w pozycje ("+str(shot_index_x)+","+str(shot_index_y)+")")
+                                    user.shot_in_boat_piece(shot_index_x, shot_index_y, enemy_array, screen)
+                                    pygame.display.flip()
+                                    if user.is_it_end():
+                                        self.this_is_end()
+                                client.send_message('endturn')
+                                turn = 2
+                            elif turn == 2:
+                                msg = client.rcv_message()
+                                if msg == 'endturn':
+                                    turn = 1
 
                 if event.type == pygame.QUIT:
                     self.isPlaying = False
                     pygame.quit()
                     sys.exit()
+                pygame.display.flip()
+
+    def this_is_end(self):
+        end = True
+        while end:
+            screen.fill(white)
+            self.draw_text(self.SCREEN_W/2,self.SCREEN_H,'Wygrałeś Gratulacje !')
             pygame.display.flip()
 
     def shot_in_opponent_ship(self, client, x, y):
         client.send_message((x, y))
+        print("shot oponent")
 
     def dec_ships_amount(self):
         if self.ships_amount > 0:
@@ -307,6 +335,7 @@ class GameManagement(object):
         self.draw_text(font="Arial.ttf", font_size=20, color=black, pos_x=320, pos_y=505,
                        text="PIONOWO")
 
+
 class Board(object):
     """Klasa w której tworzony jest obiekt plansza,
     jest on odświeżany na bazie 2 tablic, które zawierają obraz rozgrywki"""
@@ -382,6 +411,8 @@ class Board(object):
     def update():
         """Aktualizuje obraz na ekranie"""
         pygame.display.update()
+
+
 
 
 if __name__ == "__main__":
