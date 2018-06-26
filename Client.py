@@ -1,16 +1,12 @@
 import socket
 import pickle
-import threading
-from queue import Queue
-
 
 class Client(object):
     def __init__(self, host, port):
-        threading.Thread.__init__(self)
         self.host = host
         self.port = port
         self.sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.buffer_size = 1024
+        self.buffer_size = 100000
 
     def run(self):
         try:
@@ -33,9 +29,6 @@ class Client(object):
             self.sock.close()
         except:
             print("Nie jesteś połączony z serwerem !")
-
-
-
 
     def send_message(self, msg):
         message = pickle.dumps(msg)
@@ -64,6 +57,3 @@ class Client(object):
         except:
             print("Rozłączono z serwerem!")
 
-if __name__ == "__main__":
-    client = Client('localhost',2223)
-    client.connect_server()
